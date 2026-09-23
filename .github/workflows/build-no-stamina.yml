@@ -89,7 +89,8 @@ jobs:
           $patched = 0
 
           foreach ($header in $headers) {
-            $text = Get-Content "$header.FullName" -Raw
+            $path = $header.FullName
+            $text = Get-Content -Path $path -Raw
 
             if ($text.Contains("class MenuModeChangeEvent;")) {
               $text = $text.Replace(
@@ -97,7 +98,7 @@ jobs:
                 "struct MenuModeChangeEvent;"
               )
 
-              Set-Content -Path "$header.FullName" -Value $text -NoNewline
+              Set-Content -Path $path -Value $text -NoNewline
               Write-Host "Fixed MenuModeChangeEvent declaration: $($header.FullName)"
               $patched++
             }
