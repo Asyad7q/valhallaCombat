@@ -181,7 +181,7 @@ namespace Hooks
 	};
 
 
-	static void install()
+	inline void install()
 	{
 		logger::info("Installing hooks...");
 		SKSE::AllocTrampoline(1 << 8);

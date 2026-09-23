@@ -522,7 +522,7 @@ void blockHandler::playBlockVFX(RE::Actor* blocker, blockType blockType, bool bl
 	}
 	blockFXNode->SetDelete(true);
 }
-void blockHandler::playBlockScreenShake(RE::Actor* blocker, blockType blockType) {
+void blockHandler::playBlockScreenShake(RE::Actor*, blockType blockType) {
 	switch (blockType) {
 	case blockType::guardBreaking:RE::Offset::shakeCamera(1.7, RE::PlayerCharacter::GetSingleton()->GetPosition(), 0.8f); break;
 	case blockType::timed: RE::Offset::shakeCamera(1.5, RE::PlayerCharacter::GetSingleton()->GetPosition(), 0.3f); break;

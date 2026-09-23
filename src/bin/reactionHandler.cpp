@@ -45,7 +45,7 @@ void reactionHandler::triggerStagger(RE::Actor* a_aggressor, RE::Actor* a_reacto
 	a_reactor->NotifyAnimationGraph(staggerStart);
 }
 
-void reactionHandler::triggerRecoil(RE::Actor* a_reactor, reactionType a_reactionType) {
+void reactionHandler::triggerRecoil(RE::Actor* a_reactor, reactionType) {
 	a_reactor->NotifyAnimationGraph(recoilLargeStart);
 }
 
