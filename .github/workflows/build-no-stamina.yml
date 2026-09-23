@@ -85,6 +85,35 @@ jobs:
             Write-Host "Fixed Offsets include: $file"
           }
 
+          $relocationFixes = @{
+            "$root\src\RE\L\LocationCleared.cpp" = @(
+              'REL::Relocation<func_t> func{ 18046, 18435 };',
+              'REL::Relocation<func_t> func{ RELOCATION_ID(18046, 18435) };'
+            )
+            "$root\src\RE\O\ObjectiveState.cpp" = @(
+              'REL::Relocation<func_t> func{ 23486, 23951 };',
+              'REL::Relocation<func_t> func{ RELOCATION_ID(23486, 23951) };'
+            )
+            "$root\src\RE\Q\QuestStatus.cpp" = @(
+              'REL::Relocation<func_t> func{ 24719, 25196 };',
+              'REL::Relocation<func_t> func{ RELOCATION_ID(24719, 25196) };'
+            )
+          }
+
+          foreach ($file in $relocationFixes.Keys) {
+            $old = $relocationFixes[$file][0]
+            $new = $relocationFixes[$file][1]
+            $text = Get-Content -Path $file -Raw
+
+            if (-not $text.Contains($old)) {
+              throw "Expected legacy relocation not found in $file"
+            }
+
+            $text = $text.Replace($old, $new)
+            Set-Content -Path $file -Value $text -NoNewline
+            Write-Host "Fixed relocation ID selection: $file"
+          }
+
           $headers = Get-ChildItem "$root\include" -Recurse -Filter *.h
           $patched = 0
 
