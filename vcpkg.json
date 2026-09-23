@@ -2,6 +2,7 @@
   "name": "valhallacombat",
   "version": "1",
   "dependencies": [
+    "boost-stl-interfaces",
     "fast-cpp-csv-parser",
     "rsm-binary-io",
     "simpleini",
