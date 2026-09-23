@@ -35,13 +35,13 @@ EventResult inputEventHandler::ProcessEvent(RE::InputEvent* const* a_event, RE::
 			default:
 				continue;
 			}
-			if (key == settings::iExecutionKey) {
+			if (settings::iExecutionKey >= 0 && key == static_cast<decltype(key)>(settings::iExecutionKey)) {
 				if (button->IsDown()) {
 					executionHandler::GetSingleton()->tryPcExecution();
 				}
 				break;
 			}
-			if (key == settings::iAltBlockKey) {
+			if (settings::iAltBlockKey >= 0 && key == static_cast<decltype(key)>(settings::iAltBlockKey)) {
 				if (button->IsDown()) {
 					if (settings::bTimedBlockToggle || settings::bTimedBlockProjectileToggle) {
 						blockHandler::GetSingleton()->onBlockKeyDown();

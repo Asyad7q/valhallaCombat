@@ -123,9 +123,9 @@ void blockHandler::onBlockKeyDown() {
 	
 	switch (pcBlockWindowPenalty) {
 	case blockWindowPenaltyLevel::none: break;
-	case blockWindowPenaltyLevel::light: blockWindow *= 0.8; break;
-	case blockWindowPenaltyLevel::medium: blockWindow *= 0.5; break;
-	case blockWindowPenaltyLevel::heavy: blockWindow *= 0.3; break;
+	case blockWindowPenaltyLevel::light: blockWindow *= 0.8f; break;
+	case blockWindowPenaltyLevel::medium: blockWindow *= 0.5f; break;
+	case blockWindowPenaltyLevel::heavy: blockWindow *= 0.3f; break;
 	}
 	pcTimedBlockTimer = blockWindow;
 	ValhallaCombat::GetSingleton()->activateUpdate(ValhallaCombat::HANDLER::blockHandler);
@@ -173,7 +173,7 @@ void blockHandler::OnPcSuccessfulTimedBlock() {
 
 bool blockHandler::isInBlockAngle(RE::Actor* blocker, RE::TESObjectREFR* a_obj) 
 {
-	auto angle = blocker->GetHeadingAngle(a_obj);
+	auto angle = blocker->GetHeadingAngle(a_obj->GetPosition(), false);
 	return (angle <= data::fCombatHitConeAngle && angle >= -data::fCombatHitConeAngle);
 }
 
@@ -545,7 +545,7 @@ void blockHandler::playBlockSlowTime(blockType blockType) {
 	if (slowDuration == 0) {
 		return;
 	}
-	inlineUtils::slowTime(slowDuration, 0.1);
+	inlineUtils::slowTime(slowDuration, 0.1f);
 }
 
 void blockHandler::playBlockEffects(RE::Actor* blocker, RE::Actor* attacker, blockType blockType) {

@@ -28,7 +28,7 @@ void data::loadData() {
 	
 }
 
-void data::loadSound(RE::TESDataHandler* a_data) {
+void data::loadSound(RE::TESDataHandler*) {
 	logger::info("Loading sound descriptors...");
 	DtryUtils::formLoader loader("ValhallaCombat.esp");
 	loader.load(soundParryShield, 0x433c);
@@ -43,14 +43,14 @@ void data::loadSound(RE::TESDataHandler* a_data) {
 	logger::info("...done");
 }
 
-void data::loadPerk(RE::TESDataHandler* a_data) {
+void data::loadPerk(RE::TESDataHandler*) {
 	logger::info("Loading perk...");
 	DtryUtils::formLoader loader("ValhallaCombat.esp");
 	loader.log();
 	logger::info("...done");
 }
 
-void data::loadBlockFX(RE::TESDataHandler* a_data) {
+void data::loadBlockFX(RE::TESDataHandler*) {
 	logger::info("Loading block FX...");
 	DtryUtils::formLoader loader("ValhallaCombat.esp");
 	loader.load(BlockFX, 0x60c2f);
@@ -104,7 +104,7 @@ void data::loadIdleSection(RE::TESDataHandler* a_data, std::vector<RE::TESIdleFo
 	logger::info("Loaded {} idles from section {}.", idlesLoaded, section);
 }
 
-void data::loadIdle(RE::TESDataHandler* a_actor) {
+void data::loadIdle(RE::TESDataHandler*) {
 	CSimpleIniA ini;
 	ini.LoadFile(kmFilePath);
 	logger::info("Loading idle...");

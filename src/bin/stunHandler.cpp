@@ -234,7 +234,7 @@ void stunHandler::onStunBroken(RE::Actor* a_actor) {
 	}
 }
 
-void stunHandler::damageStun(RE::Actor* a_aggressor, RE::Actor* a_victim, float a_damage) {
+void stunHandler::damageStun(RE::Actor*, RE::Actor* a_victim, float a_damage) {
 	//DEBUG("Damaging {}'s stun by {} points.", a_victim->GetName(), a_damage);
 	if (safeGet_ActorStunData(a_victim)->damageStun(a_damage)) {
 		if (!safeGet_isStunBroken(a_victim)) {//the current damage depletes actor stun, but actor's stunned state is not yet tracked.

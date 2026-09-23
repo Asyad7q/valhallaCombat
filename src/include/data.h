@@ -229,7 +229,7 @@ private:
 namespace inlineUtils
 {
 	/*Parse a string into a vector of tokens.*/
-	static std::vector<std::string> tokenize(const std::string& delimiter, const std::string& str) {
+	inline std::vector<std::string> tokenize(const std::string& delimiter, const std::string& str) {
 		std::vector<std::string> arr;
 		size_t strleng = str.length();
 		size_t delleng = delimiter.length();
@@ -259,12 +259,12 @@ namespace inlineUtils
 	}
 
 	/*Turn a formID into a uint32. Useful when reading from ini.*/
-	static bool ToInt32(std::string str, int& value)
+	inline bool ToInt32(std::string str, int& value)
 	{
 		const char* strVal = str.c_str();
 		char* endVal = NULL;
 		long ret = strtol(strVal, &endVal, 0);
-		if (ret == LONG_MAX || ret == LONG_MIN || (int)endVal != (int)strVal + strlen(strVal))
+		if (ret == LONG_MAX || ret == LONG_MIN || endVal != strVal + strlen(strVal))
 			return false;
 		value = ret;
 		return true;

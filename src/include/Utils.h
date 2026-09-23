@@ -6,7 +6,7 @@
 #include  <random>
 #include  <iterator>
 #define CONSOLELOG(msg) 	RE::ConsoleLog::GetSingleton()->Print(msg);
-#define PI 3.1415926535897932384626
+#define PI 3.1415926535897932384626f
 namespace Utils
 {
 	namespace Actor
@@ -72,7 +72,7 @@ namespace inlineUtils
 
 	template<typename Iter, typename RandomGenerator>
 	Iter select_randomly(Iter start, Iter end, RandomGenerator& g) {
-		std::uniform_int_distribution<> dis(0, std::distance(start, end) - 1);
+		std::uniform_int_distribution<typename std::iterator_traits<Iter>::difference_type> dis(0, std::distance(start, end) - 1);
 		std::advance(start, dis(g));
 		return start;
 	}

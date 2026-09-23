@@ -3,19 +3,6 @@
 #include "include/Utils.h"
 #include "ValhallaCombat.hpp"
 using namespace inlineUtils;
-static void setGameSettingb(const char* a_setting, bool a_value)
-{
-	RE::Setting* setting = nullptr;
-	RE::GameSettingCollection* _settingCollection = RE::GameSettingCollection::GetSingleton();
-	setting = _settingCollection->GetSetting(a_setting);
-	if (!setting) {
-		logger::info("invalid setting: {}", a_setting);
-	} else {
-		logger::info("setting {} from {} to {}", a_setting, setting->GetFloat(), a_value);
-		setting->data.b = false;
-	}
-}
-
 void settings::init() {
 	logger::info("Initilize settings...");
 	DtryUtils::formLoader loader("ValhallaCombat.esp");

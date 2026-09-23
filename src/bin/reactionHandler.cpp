@@ -38,7 +38,7 @@ void reactionHandler::async_triggerContinuousStagger(RE::Actor* a_causer, RE::Ac
 };
 	
 void reactionHandler::triggerStagger(RE::Actor* a_aggressor, RE::Actor* a_reactor, float a_reactionMagnitude) {
-	auto headingAngle = a_reactor->GetHeadingAngle(a_aggressor);
+	auto headingAngle = a_reactor->GetHeadingAngle(a_aggressor->GetPosition(), false);
 	auto direction = (headingAngle >= 0.0f) ? headingAngle / 360.0f : (360.0f + headingAngle) / 360.0f;
 	a_reactor->SetGraphVariableFloat(staggerDirection, direction);
 	a_reactor->SetGraphVariableFloat(StaggerMagnitude, a_reactionMagnitude);
@@ -94,8 +94,8 @@ void reactionHandler::triggerStagger(RE::Actor* a_causer, RE::Actor* a_reactor, 
 	else {
 		switch (a_reactionType) {
 		case kSmall: triggerStagger(a_causer, a_reactor, 0); break;
-		case kMedium: triggerStagger(a_causer, a_reactor, 0.3); break;
-		case kLarge: triggerStagger(a_causer, a_reactor, 0.7); break;
+		case kMedium: triggerStagger(a_causer, a_reactor, 0.3f); break;
+		case kLarge: triggerStagger(a_causer, a_reactor, 0.7f); break;
 		case kLargest: triggerStagger(a_causer, a_reactor, 10); break;
 		case kKnockBack: triggerKnockBack(a_causer, a_reactor); break;
 		}
