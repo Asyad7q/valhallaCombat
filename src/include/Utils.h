@@ -36,7 +36,8 @@ namespace Utils
 	namespace AvOwner
 	{
 		inline RE::Actor* asActor(RE::ActorValueOwner* a_avOwner) {
-			return &REL::RelocateParentIfNewer<RE::Actor>(SKSE::RUNTIME_SSE_1_6_629, a_avOwner, 0xB0, 0xB8);
+			const auto offset = REL::Module::get().version().compare(SKSE::RUNTIME_SSE_1_6_629) == std::strong_ordering::less ? 0xB0 : 0xB8;
+			return reinterpret_cast<RE::Actor*>(reinterpret_cast<char*>(a_avOwner) - offset);
 		}
 	}
 }

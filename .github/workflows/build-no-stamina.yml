@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: CharmedBaryon/CommonLibSSE-NG
-          ref: 58d68892197e2cf17be53a5162f0e096e14b8d97
+          ref: d51fa0938bf53f829ff83a144079136f0d4a2f18
           path: CommonLibSSE-NG
           submodules: recursive
 
@@ -57,85 +57,6 @@ jobs:
           }
 
           Write-Host "Legacy 7-Zip archive verified successfully."
-
-      - name: Patch historical CommonLibSSE-NG
-        shell: pwsh
-        run: |
-          $root = "${{ github.workspace }}\CommonLibSSE-NG"
-
-          $offsetFiles = @(
-            "$root\src\RE\L\LocationCleared.cpp",
-            "$root\src\RE\O\ObjectiveState.cpp",
-            "$root\src\RE\Q\QuestStatus.cpp"
-          )
-
-          foreach ($file in $offsetFiles) {
-            $text = Get-Content "$file" -Raw
-
-            if (-not $text.Contains('#include "Offsets.h"')) {
-              throw "Expected Offsets.h include not found in $file"
-            }
-
-            $text = $text.Replace(
-              '#include "Offsets.h"',
-              '#include "RE/Offsets.h"'
-            )
-
-            Set-Content -Path "$file" -Value $text -NoNewline
-            Write-Host "Fixed Offsets include: $file"
-          }
-
-          $relocationFixes = @{
-            "$root\src\RE\L\LocationCleared.cpp" = @(
-              'REL::Relocation<func_t> func{ 18046, 18435 };',
-              'REL::Relocation<func_t> func{ RELOCATION_ID(18046, 18435) };'
-            )
-            "$root\src\RE\O\ObjectiveState.cpp" = @(
-              'REL::Relocation<func_t> func{ 23486, 23951 };',
-              'REL::Relocation<func_t> func{ RELOCATION_ID(23486, 23951) };'
-            )
-            "$root\src\RE\Q\QuestStatus.cpp" = @(
-              'REL::Relocation<func_t> func{ 24719, 25196 };',
-              'REL::Relocation<func_t> func{ RELOCATION_ID(24719, 25196) };'
-            )
-          }
-
-          foreach ($file in $relocationFixes.Keys) {
-            $old = $relocationFixes[$file][0]
-            $new = $relocationFixes[$file][1]
-            $text = Get-Content -Path $file -Raw
-
-            if (-not $text.Contains($old)) {
-              throw "Expected legacy relocation not found in $file"
-            }
-
-            $text = $text.Replace($old, $new)
-            Set-Content -Path $file -Value $text -NoNewline
-            Write-Host "Fixed relocation ID selection: $file"
-          }
-
-          $headers = Get-ChildItem "$root\include" -Recurse -Filter *.h
-          $patched = 0
-
-          foreach ($header in $headers) {
-            $path = $header.FullName
-            $text = Get-Content -Path $path -Raw
-
-            if ($text.Contains("class MenuModeChangeEvent;")) {
-              $text = $text.Replace(
-                "class MenuModeChangeEvent;",
-                "struct MenuModeChangeEvent;"
-              )
-
-              Set-Content -Path $path -Value $text -NoNewline
-              Write-Host "Fixed MenuModeChangeEvent declaration: $($header.FullName)"
-              $patched++
-            }
-          }
-
-          if ($patched -eq 0) {
-            throw "No MenuModeChangeEvent forward declarations were patched"
-          }
 
       - name: Disable obsolete pkg-config checks
         shell: pwsh
