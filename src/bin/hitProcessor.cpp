@@ -1,5 +1,4 @@
 #include "include/hitProcessor.h"
-#include "include/attackHandler.h"
 #include "include/stunHandler.h"
 #include "include/balanceHandler.h"
 #include "include/executionHandler.h"
@@ -15,16 +14,6 @@ void hitProcessor::processHit(RE::Actor* a_aggressor, RE::Actor* a_victim, RE::H
 	using HITFLAG = RE::HitData::Flag;
 	if (hitFlag.any(HITFLAG::kBlocked)) {
 		blockHandler::GetSingleton()->processPhysicalBlock(a_victim, a_aggressor, hitFlag, a_hitData);
-		if (settings::bBlockedHitRegenStamina && settings::bAttackStaminaToggle) {
-			if (!hitFlag.any(HITFLAG::kPowerAttack)) {
-				attackHandler::GetSingleton()->OnLightHit(a_aggressor);
-			}
-		}
-		if (settings::bAttackStaminaToggle) {
-			if (debuffHandler::GetSingleton()->isInDebuff(a_victim)) {
-				reactionHandler::triggerStagger(a_aggressor, a_victim, reactionHandler::kLargest);
-			}
-		}
 		return;
 	}
 	//from this point on the hit is not blocked/
@@ -41,14 +30,6 @@ void hitProcessor::processHit(RE::Actor* a_aggressor, RE::Actor* a_victim, RE::H
 	}
 
 	//from this point on the hit can only be unblocked melee hit.
-	if (settings::bAttackStaminaToggle) {
-		if (!hitFlag.any(HITFLAG::kPowerAttack)) {
-			attackHandler::GetSingleton()->OnLightHit(a_aggressor);
-		}
-		if (debuffHandler::GetSingleton()->isInDebuff(a_victim)) {
-			Utils::Actor::restoreav(a_victim, RE::ActorValue::kStamina, a_victim->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina) * settings::fMeleeRewardLightHit_Percent);
-		}
-	}
 
 	if (stunHandler::GetSingleton()->getIsStunBroken(a_victim) && a_hitData.weapon->IsMelee()) {
 		if (a_aggressor->IsPlayerRef()) {

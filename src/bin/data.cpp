@@ -46,7 +46,6 @@ void data::loadSound(RE::TESDataHandler* a_data) {
 void data::loadPerk(RE::TESDataHandler* a_data) {
 	logger::info("Loading perk...");
 	DtryUtils::formLoader loader("ValhallaCombat.esp");
-	loader.load(debuffPerk, 0x2DB2);
 	loader.log();
 	logger::info("...done");
 }

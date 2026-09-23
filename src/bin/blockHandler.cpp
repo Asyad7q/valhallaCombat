@@ -8,7 +8,6 @@
 #include "include/AI.h"
 #include "include/lib/BlockSpark.h"
 #include "include/offsets.h"
-#include "include/staminaHandler.h"
 #include "ValhallaCombat.hpp"
 
 
@@ -339,81 +338,17 @@ void blockHandler::destroyProjectile(RE::Projectile* a_projectile)
 }
 
 #pragma region Process Block
-void blockHandler::processPhysicalBlock(RE::Actor* blocker, RE::Actor* aggressor, SKSE::stl::enumeration<RE::HitData::Flag, std::uint32_t> a_hitFlag, RE::HitData& hitData)
+void blockHandler::processPhysicalBlock(
+    RE::Actor*,
+    RE::Actor*,
+    SKSE::stl::enumeration<RE::HitData::Flag, std::uint32_t>,
+    RE::HitData&)
 {
-	if (settings::bBlockStaminaToggle) {
-		processStaminaBlock(blocker, aggressor, a_hitFlag, hitData);
-	}
+    // No-Stamina build:
+    // Valhalla does not modify damage, stamina, guard break,
+    // or exhaustion for ordinary physical blocks.
 }
 
-
-/// <returns>The stamina cost multiplier for a stamina block, based on the plugin settings.</returns>
-inline float getBlockStaminaCostMult(RE::Actor* blocker, RE::Actor* aggressor, SKSE::stl::enumeration<RE::HitData::Flag, std::uint32_t> a_hitFlag)
-{
-
-	if (a_hitFlag.any(HITFLAG::kBlockWithWeapon)) {
-		//DEBUG("hit blocked with weapon");
-		if (blocker->IsPlayerRef()) {
-			return settings::fBckWpnStaminaMult_PC_Block_NPC;
-		}
-		else {
-			if (aggressor->IsPlayerRef()) {
-				return settings::fBckWpnStaminaMult_NPC_Block_PC;
-			}
-			else {
-				return settings::fBckWpnStaminaMult_NPC_Block_NPC;
-			}
-		}
-	}
-	else {
-		//DEBUG("hit blocked with shield");
-		if (blocker->IsPlayerRef()) {
-			return settings::fBckShdStaminaMult_PC_Block_NPC;
-		}
-		else {
-			if (aggressor->IsPlayerRef()) {
-				return settings::fBckShdStaminaMult_NPC_Block_PC;
-			}
-			else {
-				return settings::fBckShdStaminaMult_NPC_Block_NPC;
-			}
-		}
-	}
-}
-
-void blockHandler::processStaminaBlock(RE::Actor* a_blocker, RE::Actor* a_aggressor, SKSE::stl::enumeration<RE::HitData::Flag, std::uint32_t> a_hitFlag, RE::HitData& a_hitData)
-{
-	using HITFLAG = RE::HitData::Flag;	
-	float staminaDamage = a_hitData.totalDamage;
-
-	inlineUtils::offsetRealDamage(staminaDamage, a_aggressor, a_blocker);
-	float staminaDamageMult = getBlockStaminaCostMult(a_blocker, a_aggressor, a_hitFlag);
-	staminaDamage *= staminaDamageMult;
-	float targetStamina = a_blocker->AsActorValueOwner()->GetActorValue(RE::ActorValue::kStamina);
-
-	//check whether there's enough stamina to block incoming attack
-	if (targetStamina < staminaDamage) {
-		if (settings::bGuardBreak) {
-			if (a_hitFlag.any(HITFLAG::kPowerAttack)) {
-				reactionHandler::triggerStagger(a_aggressor, a_blocker, reactionHandler::kLarge);
-			}
-			else {
-				reactionHandler::triggerStagger(a_aggressor, a_blocker, reactionHandler::kMedium);
-			}
-		}
-		a_hitData.totalDamage =
-			(staminaDamage - (targetStamina / staminaDamageMult))  //real damage actor will be receiving.
-			* (a_hitData.totalDamage) / staminaDamage;             //offset real damage back into raw damage to be converted into real damage again later.
-		
-		Utils::Actor::damageav(a_blocker, RE::ActorValue::kStamina,targetStamina);
-		debuffHandler::GetSingleton()->initStaminaDebuff(a_blocker); //initialize debuff for the failed blocking attempt
-	}
-	else {
-		a_hitData.totalDamage = 0;
-		Utils::Actor::damageav(a_blocker, RE::ActorValue::kStamina,
-			staminaDamage);
-	}
-}
 bool blockHandler::getIsPcTimedBlocking() {
 	return isPcTimedBlocking;
 }
@@ -473,21 +408,10 @@ bool blockHandler::processMeleeTimedBlock(RE::Actor* a_blocker, RE::Actor* a_att
 
 
 
-	if (isPerfectblock) {//stagger opponent immediately on perfect block.
+	if (isPerfectblock) {
+		// Keep Perfect Block recoil, but do not touch Stamina.
 		reactionHandler::triggerRecoil(a_attacker, reactionHandler::reactionType::kLarge);
-		debuffHandler::GetSingleton()->stopDebuff(a_blocker);
-		Utils::Actor::refillActorValue(a_blocker, RE::ActorValue::kStamina); //perfect blocking completely restores actor value.
 	}
-	else {
-		RE::HitData hitData;
-		RE::InventoryEntryData* attackerWeapon = a_attacker->GetAttackingWeapon();
-		
-		hitData.Populate(a_attacker, a_blocker, attackerWeapon);
-		Utils::Actor::damageav(a_blocker, RE::ActorValue::kStamina,
-			hitData.totalDamage * getBlockStaminaCostMult(a_blocker, a_attacker, hitData.flags) * settings::fTimedBlockStaminaCostMult);
-		
-	}
-
 	if (EldenCounterCompatibility::on) {
 		EldenCounterCompatibility::triggerCounter(a_blocker);
 	}

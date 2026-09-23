@@ -6,59 +6,19 @@
 #include "include/hitProcessor.h"
 #include "include/AI.h"
 #include "include/settings.h"
-#include "include/attackHandler.h"
 namespace Hooks
 {
-#pragma region GetHeavyStaminaCost
-	float Hook_OnGetAttackStaminaCost::getAttackStaminaCost(RE::ActorValueOwner* avOwner, RE::BGSAttackData* atkData)
+	void Hook_OnRestoreActorValue::RestoreActorValue(
+		RE::Actor* a_actor,
+		RE::ActorValue a_actorValue,
+		float a_val)
 	{
-		RE::Actor* a_actor = Utils::AvOwner::asActor(avOwner);
-		if (!settings::bNonCombatStaminaCost && !a_actor->IsInCombat()) {
-			return 0;
-		}
-		return _getAttackStaminaCost(avOwner, atkData);
-	}
-#pragma endregion
-
-#pragma region StaminaRegen
-	/*function generating conditions for stamina regen. Iff returned value is true, no regen.
-used to block stamina regen in certain situations.*/
-	bool Hook_OnCheckStaminaRegenCondition::HasFlags1(RE::ActorState* a_this, uint16_t a_flags)
-	{
-		//if bResult is true, prevents regen.
-		bool bResult = _HasFlags1(a_this, a_flags);  // is sprinting?
-
-		if (!bResult) {
-			RE::Actor* actor = SKSE::stl::adjust_pointer<RE::Actor>(a_this, -0xB8); //apparently the offset is different for the newest AE build; TODO:find the offset. currently using restoreactorvalue hook instead to block regen.
-			auto attackState = actor->AsActorState()->GetAttackState();
-			if (actor != attackHandler::GetSingleton()->actorToRegenStamina) {
-				//if melee hit regen is needed, no need to disable regen.
-				bResult = (attackState > RE::ATTACK_STATE_ENUM::kNone && attackState <= RE::ATTACK_STATE_ENUM::kBowFollowThrough);  //don't regen stamina if attacking
-			}
-		}
-		return bResult;
-	}
-
-	void Hook_OnRestoreActorValue::RestoreActorValue(RE::Actor* a_actor, RE::ActorValue a_actorValue, float a_val)
-	{
-		switch (a_actorValue) {
-		case RE::ActorValue::kStamina:
-			if (a_actor->IsBlocking()) {
-				a_val *= settings::fBlockingStaminaRegenMult;
-			} else if (a_actor != attackHandler::GetSingleton()->actorToRegenStamina) {
-				RE::ATTACK_STATE_ENUM atkState = a_actor->AsActorState()->GetAttackState();
-				if (atkState > RE::ATTACK_STATE_ENUM::kNone && atkState <= RE::ATTACK_STATE_ENUM::kBowFollowThrough) {
-					return;  //don't regen stamina if attacking
-				}
-			}
-			break;
-		case RE::ActorValue::kHealth:
-			stunHandler::GetSingleton()->modStun(a_actor, a_val);//stun regen on health regen
+		if (a_actorValue == RE::ActorValue::kHealth) {
+			stunHandler::GetSingleton()->modStun(a_actor, a_val);
 		}
 
 		_RestoreActorValue(a_actor, a_actorValue, a_val);
 	}
-#pragma endregion
 
 //#pragma region getStaggerMagnitude_Weapon
 //	float Hook_OnGetStaggerMagnitude::getStaggerMagnitude_Weapon(RE::ActorValueOwner* a1, RE::ActorValueOwner* a2, RE::TESObjectWEAP* a3, float a4)
@@ -151,27 +111,6 @@ used to block stamina regen in certain situations.*/
 			return;
 		}
 		_ProcessHit(a_aggressor, a_victim, a_int1, a_bool, a_unkptr);
-	}
-
-	/*Check if the attack action should be performed depending on the actor's debuff state.*/
-	bool Hook_OnAttackAction::PerformAttackAction(RE::TESActionData* a_actionData)
-	{
-		if (!settings::bStaminaDebuffToggle) {
-			return _PerformAttackAction(a_actionData);
-		}
-		auto ref = a_actionData->source.get();
-		if (!ref) {
-			return _PerformAttackAction(a_actionData);
-		}
-		RE::Actor* actor = ref->As<RE::Actor>();
-		if (!actor) {
-			return _PerformAttackAction(a_actionData);
-		}
-		if (debuffHandler::GetSingleton()->isInDebuff(actor)) {
-			return false;
-		}
-
-		return _PerformAttackAction(a_actionData);
 	}
 
 	static void unblock_delayed_taskfunc(RE::AttackBlockHandler* a_this, RE::ButtonEvent* a_event, RE::PlayerControlsData* a_data) 

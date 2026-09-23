@@ -1,7 +1,6 @@
 #pragma once
 #include "PCH.h"
 #include "data.h"
-#include "attackHandler.h"
 #include "blockHandler.h"
 using HITFLAG = RE::HitData::Flag;
 class hitProcessor {

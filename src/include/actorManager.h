@@ -22,8 +22,6 @@ public:
 
 	/*Debuff*/
 	/*bool isInDebuff;
-	float staminaMeterBlinkingTimer;
-
 	/*Stun*/
 	/*float maxStun;
 	float currentStun;
@@ -40,8 +38,6 @@ public:
 	/*Start managing this actor and tracking their metadata.
 	@param actor: actor to be managed.*/
 	/*void manageActor(RE::Actor* actor);
-
-	bool isInDebuff(RE::Actor* actor);
 	bool isPerfectBlocking(RE::Actor* actor);
 	bool isPerfectBlockingCoolingDown(RE::Actor* actor);
 

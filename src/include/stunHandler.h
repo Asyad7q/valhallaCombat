@@ -25,7 +25,8 @@ private:
 		@param actor: actor whose stun will be calculated
 		@return this actor's max sun.*/
 		inline float calculateMaxStun(RE::Actor* a_actor) {
-			return (a_actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kHealth) + a_actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kStamina)) / 2;
+			// No-Stamina build: stun capacity depends on Health only.
+			return a_actor->AsActorValueOwner()->GetPermanentActorValue(RE::ActorValue::kHealth);
 		}
 
 	public:

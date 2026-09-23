@@ -1,5 +1,4 @@
 #pragma once
-#include "debuffHandler.h"
 #include "lib/robin_hood.h"
 #include "lib/SimpleIni.h"
 #pragma warning(disable: 4146)
@@ -29,7 +28,6 @@ public:
 
 #pragma endregion
 #pragma region Perk
-	static inline RE::BGSPerk* debuffPerk;
 #pragma endregion
 #pragma region ExecutionIdles
 	using KM = std::vector<RE::TESIdleForm*>;

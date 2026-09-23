@@ -14,8 +14,6 @@ public:
 
 	/*Perform a series of calculations to decide whether an actor should 
 	do a guard-counter. If so, make the actor perform a guard counter.*/
-	void calculateCounterChance(RE::Actor* actor);
-
 	void action_PerformEldenCounter(RE::Actor* actor);
 
 	bool getShouldTimedBlock(RE::Actor* actor);

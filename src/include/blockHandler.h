@@ -117,17 +117,6 @@ public:
 
 private:
 	/// <summary>
-	/// Process a stamina blocking attempt similar to "shield of stamina".
-	/// Actor with enough stamina can negate all incoming health damage with stamina.
-	/// Actor without enough stamina will triggerStagger and receive partial damage.
-	/// </summary>
-	/// <param name="a_blocker"></param>
-	/// <param name="a_aggressor"></param>
-	/// <param name="a_hitFlag"></param>
-	/// <param name="a_hitData"></param>
-	/// <param name="a_realDamage"></param>
-	void processStaminaBlock(RE::Actor* a_blocker, RE::Actor* a_aggressor, SKSE::stl::enumeration<RE::HitData::Flag, std::uint32_t> a_hitFlag, RE::HitData& a_hitData);
-	
 	/// <summary>
 	/// Attempt to block an incoming arrow projectile for the blocker.
 	/// Block is successful if the blocker has enough magicka.

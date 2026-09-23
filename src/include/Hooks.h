@@ -5,43 +5,6 @@
 #include "include/Utils.h"
 namespace Hooks
 {
-	class Hook_OnGetAttackStaminaCost  //Actor__sub_140627930+16E	call ActorValueOwner__sub_1403BEC90
-	{
-		/*to cancel out vanilla power attack stamina consumption.*/
-	public:
-		static void install()
-		{
-			auto& trampoline = SKSE::GetTrampoline();
-
-			REL::Relocation<uintptr_t> hook{ RELOCATION_ID(37650, 38603) };  //SE:627930 + 16E => 3BEC90 AE:64D350 + 171 => 3D6720
-
-			_getAttackStaminaCost = trampoline.write_call<5>(hook.address() + RELOCATION_OFFSET(0x16E, 0x171), getAttackStaminaCost);
-			
-			logger::info("hook:OnGetAttackStaminaCost");
-		}
-
-	private:
-		static float getAttackStaminaCost(RE::ActorValueOwner* avOwner, RE::BGSAttackData* atkData);
-		static inline REL::Relocation<decltype(getAttackStaminaCost)> _getAttackStaminaCost;
-	};
-
-
-	class Hook_OnCheckStaminaRegenCondition  //block stamina regen during weapon swing
-	{
-	public:
-		static void install()
-		{
-			REL::Relocation<uintptr_t> hook{ RELOCATION_ID(37510, 38452) };  // 140620690       140645AA0
-			auto& trampoline = SKSE::GetTrampoline();
-			_HasFlags1 = trampoline.write_call<5>(hook.address() + RELOCATION_OFFSET(0x62, 0x6F), HasFlags1);
-			logger::info("hook:CheckStaminaRegenCondition");
-		}
-
-	private:
-		static bool HasFlags1(RE::ActorState* a_this, uint16_t a_flags);
-		static inline REL::Relocation<decltype(HasFlags1)> _HasFlags1;  //14063C330       140662930
-	};
-
 	class Hook_OnRestoreActorValue
 	{
 	public:
@@ -217,36 +180,16 @@ namespace Hooks
 		static inline REL::Relocation<decltype(processHit)> _ProcessHit;
 	};
 
-	class Hook_OnAttackAction
-	{
-	public:
-		static void install()
-		{
-			auto& trampoline = SKSE::GetTrampoline();
-			REL::Relocation<std::uintptr_t> AttackActionBase{ RELOCATION_ID(48139, 49170) };
-			_PerformAttackAction = trampoline.write_call<5>(AttackActionBase.address() + RELOCATION_OFFSET(0x4D7, 0x435), PerformAttackAction);
-			logger::info("hook:OnAttackAction");
-		}
-
-	private:
-		static bool PerformAttackAction(RE::TESActionData* a_actionData);
-
-		static inline REL::Relocation<decltype(PerformAttackAction)> _PerformAttackAction;
-	};
-
 
 	static void install()
 	{
 		logger::info("Installing hooks...");
 		SKSE::AllocTrampoline(1 << 8);
-		Hook_OnGetAttackStaminaCost::install();
-		//Hook_OnCheckStaminaRegenCondition::install(); //todo: fix this hook
 		Hook_OnRestoreActorValue::install();
 		Hook_OnMeleeHit::install();
 		Hook_OnPlayerUpdate::install();
 		Hook_OnProjectileCollision::install();
 		Hook_OnMeleeCollision::install();
-		Hook_OnAttackAction::install();
 		Hook_AttackBlockHandler_OnProcessButton::install();
 		logger::info("...done");
 	}

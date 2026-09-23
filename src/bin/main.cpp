@@ -2,7 +2,6 @@
 #include "include/Hooks.h"
 #include "include/Papyrus.h"
 #include "include/data.h"
-#include "include/debuffHandler.h"
 #include "include/events.h"
 #include "include/lib/TrueHUDAPI.h"
 #include "ValhallaCombat.hpp"
@@ -57,7 +56,6 @@ void onPostLoad() {
 }
 
 void onPostLoadGame() {
-	debuffHandler::GetSingleton()->stopDebuff(RE::PlayerCharacter::GetSingleton());
 	stunHandler::GetSingleton()->reset();
 	settings::updateGlobals();
 }

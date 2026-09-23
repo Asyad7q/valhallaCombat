@@ -1,5 +1,4 @@
 #pragma once
-#include "include/debuffHandler.h"
 #include "include/blockHandler.h"
 #include "include/stunHandler.h"
 #include "include/balanceHandler.h"
@@ -22,8 +21,7 @@ public:
 
 
 	enum HANDLER {
-		debuffHandler = 0,
-		blockHandler,
+		blockHandler = 0,
 		stunHandler,
 		balanceHandler,
 	};
@@ -33,8 +31,6 @@ public:
 	void activateUpdate(HANDLER a_ValhallaHandler) {
 		switch (a_ValhallaHandler)
 		{
-		case ValhallaCombat::debuffHandler: update_DebuffHandler = true;
-			break;
 		case ValhallaCombat::blockHandler: update_BlockHandler = true;
 			break;
 		case ValhallaCombat::stunHandler: update_StunHandler = true;
@@ -46,8 +42,6 @@ public:
 	@param handlerToDeactivate: the handler which will stop updating per tick.*/
 	void deactivateUpdate(HANDLER a_ValallaHandler) {
 		switch (a_ValallaHandler) {
-		case ValhallaCombat::debuffHandler: update_DebuffHandler = false;
-			break;
 		case ValhallaCombat::blockHandler: update_BlockHandler = false;
 			break;
 		case ValhallaCombat::stunHandler: update_StunHandler = false;
@@ -60,9 +54,6 @@ public:
 	void update() {
 		if (RE::UI::GetSingleton()->GameIsPaused()) {
 			return;
-		}
-		if (update_DebuffHandler) {
-			debuffHandler::GetSingleton()->update();
 		}
 		if (update_BlockHandler) {
 			blockHandler::GetSingleton()->update();
@@ -119,7 +110,6 @@ public:
 	}
 
 private:
-	bool update_DebuffHandler;
 	bool update_BlockHandler;
 	bool update_StunHandler;
 	bool update_balanceHandler;

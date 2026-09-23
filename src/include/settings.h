@@ -1,5 +1,4 @@
 #pragma once
-#include "debuffHandler.h"
 #include "lib/robin_hood.h"
 #include "lib/SimpleIni.h"
 
@@ -23,42 +22,6 @@ public:
 	static inline RE::TESGlobal* glob_Nemesis_EldenCounter_NPC;
 	static inline RE::TESGlobal* glob_Nemesis_EldenCounter_Damage;
 	static inline RE::TESGlobal* glob_EldenCounter_EspPluginLoaded;
-
-#pragma endregion
-
-#pragma region StaminSettings
-	static inline bool bUIAlert = true;
-	static inline bool bNonCombatStaminaCost = true;
-	
-	
-	static inline float fStaminaRegenMult = 5;
-	static inline float fStaminaRegenLimit = 50;
-	static inline float fStaminaRegenMin = 10;
-	static inline float fCombatStaminaRegenMult = 1;
-	static inline float fBlockingStaminaRegenMult = 0.5;
-	static inline float fStaminaRegenDelay = 2;
-
-	static inline float bBlockedHitRegenStamina = false;
-
-	static inline bool bBlockStaminaToggle = false;
-	static inline bool bGuardBreak = true;
-	static inline float fBckShdStaminaMult_PC_Block_NPC = 1;
-	static inline float fBckWpnStaminaMult_PC_Block_NPC = 1;
-
-	static inline float fBckShdStaminaMult_NPC_Block_PC = 1; //stamina penalty mult for NPCs blockign a player hit with a shield
-	static inline float fBckWpnStaminaMult_NPC_Block_PC = 1;
-
-	static inline float fBckShdStaminaMult_NPC_Block_NPC = 1;
-	static inline float fBckWpnStaminaMult_NPC_Block_NPC = 1;
-
-	static inline bool bAttackStaminaToggle = true;
-	static inline bool bAttackStaminaToggle_NPC = false;
-
-	static inline bool bStaminaDebuffToggle = true;
-	static inline float fMeleeCostLightMiss_Point = 30;
-	static inline float fMeleeRewardLightHit_Percent = 0.2f;
-	static inline float fMeleeCostHeavyMiss_Percent = 0.4f;
-	static inline float fMeleeCostHeavyHit_Percent = 0.333f;
 
 #pragma endregion
 
@@ -86,7 +49,6 @@ public:
 	static inline float fTimedBlockWindow = 0.3f;
 	static inline float fPerfectBlockWindow = 0.15f;
 	static inline float fTimedBlockCooldownTime = 0.5f;
-	static inline float fTimedBlockStaminaCostMult = 0.5f;
 
 	static inline float fTackleWindow = 0.2f;
 	static inline float fTackleCooldownTime = 2.f;
@@ -143,7 +105,6 @@ public:
 #pragma endregion
 
 #pragma region AISettings
-	static inline bool bExhaustionAIToggle = true;
 	static inline bool bCirclingAIToggle = true;
 	static inline bool bPerilousAttackAIToggle = true;
 #pragma endregion

@@ -30,10 +30,8 @@ bool ModAPI::VALInterface::isActorStunned(RE::Actor* a_actor) noexcept
 }
 
 
-bool ModAPI::VALInterface::isActorExhausted(RE::Actor* a_actor) noexcept
+bool ModAPI::VALInterface::isActorExhausted(RE::Actor*) noexcept
 {
-	if (!a_actor) {
-		return false;
-	}
-	return debuffHandler::GetSingleton()->isInDebuff(a_actor);
+	// No-Stamina build: Valhalla has no exhaustion system.
+	return false;
 }
