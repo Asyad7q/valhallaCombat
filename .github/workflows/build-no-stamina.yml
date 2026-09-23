@@ -34,6 +34,27 @@ jobs:
         shell: pwsh
         run: .\vcpkg\bootstrap-vcpkg.bat -disableMetrics
 
+      - name: Restore legacy 7-Zip dependency
+        shell: pwsh
+        run: |
+          $dest = "${{ github.workspace }}\vcpkg\downloads\7z2107-extra.7z"
+
+          curl.exe `
+            -L `
+            --fail `
+            --retry 3 `
+            -o "$dest" `
+            "https://downloads.sourceforge.net/project/sevenzip/7-Zip/21.07/7z2107-extra.7z"
+
+          $expected = "648d894940bcc29951752d7a8fd18c770ee8d4fd944e17f1a52588e51ca8f58375ba48514538f2e1387786fd812bb86f75fd6bdd0892685cdcafb2989942c848"
+          $actual = (Get-FileHash "$dest" -Algorithm SHA512).Hash.ToLower()
+
+          if ($actual -ne $expected) {
+            throw "7-Zip SHA512 mismatch. Expected $expected but got $actual"
+          }
+
+          Write-Host "Legacy 7-Zip archive verified successfully."
+
       - name: Prepare compiled output directory
         shell: pwsh
         run: |
@@ -49,7 +70,7 @@ jobs:
           VCPKG_ROOT: ${{ github.workspace }}\vcpkg
           CommonLibSSEPath_NG: ${{ github.workspace }}\CommonLibSSE-NG
           CompiledPluginsPath: ${{ github.workspace }}\compiled
-        run: cmake --preset vs2022-windows
+        run: cmake --preset vs2022-windows -Wno-error=deprecated
 
       - name: Build Release DLL
         shell: pwsh
