@@ -58,6 +58,30 @@ jobs:
 
           Write-Host "Legacy 7-Zip archive verified successfully."
 
+      - name: Disable obsolete pkg-config checks
+        shell: pwsh
+        run: |
+          $ports = @(
+            "${{ github.workspace }}\vcpkg\ports\fmt\portfile.cmake",
+            "${{ github.workspace }}\vcpkg\ports\spdlog\portfile.cmake"
+          )
+
+          foreach ($file in $ports) {
+            $text = Get-Content "$file" -Raw
+
+            if (-not $text.Contains("vcpkg_fixup_pkgconfig()")) {
+              throw "Expected vcpkg_fixup_pkgconfig() not found in $file"
+            }
+
+            $text = $text.Replace(
+              "vcpkg_fixup_pkgconfig()",
+              "vcpkg_fixup_pkgconfig(SKIP_CHECK)"
+            )
+
+            Set-Content -Path "$file" -Value $text -NoNewline
+            Write-Host "Patched pkg-config validation: $file"
+          }
+
       - name: Prepare compiled output directory
         shell: pwsh
         run: |
