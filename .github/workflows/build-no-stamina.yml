@@ -37,7 +37,10 @@ jobs:
       - name: Restore legacy 7-Zip dependency
         shell: pwsh
         run: |
-          $dest = "${{ github.workspace }}\vcpkg\downloads\7z2107-extra.7z"
+          $downloads = "${{ github.workspace }}\vcpkg\downloads"
+          New-Item -ItemType Directory -Force -Path "$downloads" | Out-Null
+
+          $dest = "$downloads\7z2107-extra.7z"
 
           curl.exe `
             -L `
